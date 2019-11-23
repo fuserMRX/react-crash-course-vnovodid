@@ -1,23 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
-import Profile from './Profile';
+import { Color } from './Color';
 import './App.css';
+// import Profile from './Profile'; // simple import 
+const Profile = React.lazy(() => import('./Profile')); // dynamic import
+
 
 const CancelToken = axios.CancelToken;
 let cancel;
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.sendRequest = this.sendRequest.bind(this);
-  }
 
-  state = {
-    data: null,
-    error: null
-  }
+export default function App() {
 
-  async sendRequest() {
+  const [state, setState] = useState({
+    data: null, 
+    error: null,
+    color: 'coral',
+  });
+
+  const sendRequest = async () => {
     try {
       const response = await axios.get('https://randomuser.me/api/', {
         cancelToken: new CancelToken( function executor(c) {
@@ -25,7 +26,7 @@ class App extends React.Component {
         })
       });
       const user = response.data.results[0];
-      this.setState({
+      setState({
         data: {
           avatar: user.picture.large,
           email: user.email,
@@ -35,7 +36,7 @@ class App extends React.Component {
       console.log(response);
     } catch (error) {
       if (axios.isCancel(error)) {
-        this.setState({
+        setState({
           data: null,
           error: error.message
         });
@@ -45,18 +46,38 @@ class App extends React.Component {
     }
   }
 
-  interruptRequest = () => {
+
+  const interruptRequest = () => {
     cancel('Operation canceled by the user.');
   }
 
-  render() {
-    const { data, error } = this.state;
+  useEffect( () => {
+    return () => {
+      interruptRequest();
+    }
+  })
+
+  const handleChangeColor = (value) => {
+    setState({
+      data: state.data,
+      erorr: state.error,
+      color: value
+    });
+  };
+
     return (
       <>
-        <Profile sendRequest={this.sendRequest} interruptRequest={this.interruptRequest} data={data} error={error} />
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* If provider here won't be present then we will take red value from Color.js default context value in Consumer*/}
+        <Color.Provider value={state.color}>
+          <Profile sendRequest={sendRequest}
+                  interruptRequest={interruptRequest}
+                  data={state.data}
+                  error={state.error}
+                  handleChangeColor={handleChangeColor}
+                  />
+        </Color.Provider>
+      </Suspense>
       </>
     )
-  }
 }
-
-export default App;
