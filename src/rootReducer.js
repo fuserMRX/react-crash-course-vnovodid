@@ -1,25 +1,25 @@
 import axios from 'axios';
 
-const CancelToken = axios.CancelToken;
+export const CancelToken = axios.CancelToken;
 let cancel;
 
 // Actions
 
-const userLoading = () => ({
+export const userLoading = () => ({
     type: 'USER_LOAD_START'
 });
 
-const userLoaded = (user) => ({
+export const userLoaded = (user) => ({
     type: 'USER_LOAD_SUCCESS',
     payload: user,
 });
 
-const userLoadingError = (reason) => ({
+export const userLoadingError = (reason) => ({
     type: 'USER_LOAD_ERROR',
     payload: reason,
 });
 
-const userInterruptLoading = () => ({
+export const userInterruptLoading = () => ({
     type: 'USER_LOAD_INTERRUPT',
 });
 
@@ -36,6 +36,7 @@ export const fetchUsers = () => async (dispatch) => {
           cancel = c;
         })
       });
+      console.log(response);
       const user = response.data.results[0];
       dispatch(userLoaded(user));
     } catch (error) {
@@ -43,8 +44,11 @@ export const fetchUsers = () => async (dispatch) => {
         const errorMessage = error.message || 'Server Error';
         dispatch(userLoadingError(errorMessage));
         console.log(error.message);
+      } 
+      else {
+        dispatch(userLoadingError(error.message || error || error.response.data));
       }
-      console.error(error);
+      console.error(error.message || error || error.response.data);
     }
 }
 
