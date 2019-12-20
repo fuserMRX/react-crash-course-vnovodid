@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Profile /> should render and match snapshot 1`] = `
+<div>
+  <div
+    style="border-color: coral; border-style: solid;"
+  >
+    <div>
+       request response app! 
+    </div>
+    <button
+      style="border-color: green; color: green;"
+    >
+      Change border color to green
+    </button>
+    <button
+      style="border-color: violet; color: violet;"
+    >
+      Change border color to violet
+    </button>
+    <br />
+    <button>
+      Send request to people api
+    </button>
+    <button>
+      Interrupt Request
+    </button>
+    <br />
+    <h3 />
+  </div>
+</div>
+`;
