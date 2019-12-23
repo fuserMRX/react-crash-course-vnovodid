@@ -19,10 +19,14 @@ exports[`<Profile /> should render and match snapshot 1`] = `
       Change border color to violet
     </button>
     <br />
-    <button>
+    <button
+      class="btn-start"
+    >
       Send request to people api
     </button>
-    <button>
+    <button
+      class="btn-stop"
+    >
       Interrupt Request
     </button>
     <br />
